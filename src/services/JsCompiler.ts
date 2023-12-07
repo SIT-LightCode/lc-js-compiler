@@ -13,11 +13,10 @@ export default function compileJS(code: string, params: any) {
 
     // Call the 'answer' function from within the VM
     const result = vm.run(`answer(...${JSON.stringify(params)})`);
-
     return {
       isError: false,
       errorMessage: null,
-      result: result,
+      result: result === undefined ? "undefined" : result,
     };
   } catch (error) {
     if (error instanceof Error) {
