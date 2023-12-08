@@ -13,7 +13,7 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-app.post("/compiling/js", (req: Request, res: Response) => {
+app.post("/compilers/js", (req: Request, res: Response) => {
   try {
     console.log(req.body);
 
