@@ -1,11 +1,20 @@
 import express, { Express, Request, Response } from "express";
 import compileJS from "./services/JsCompiler";
+import cors from "cors";
 
 const bodyParser = require("body-parser").json();
 const app: Express = express();
 
 const port: number = 8000;
 app.use(bodyParser);
+
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  })
+);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({
