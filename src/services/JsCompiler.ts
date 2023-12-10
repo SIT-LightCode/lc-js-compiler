@@ -1,34 +1,47 @@
 import { VM } from "vm2";
 
-export default function compileJS(code: string, params: any) {
+export default function compileJS(code: string, paramsArray: any[]) {
+  let results: {
+    isError: boolean;
+    errorMessage: string | null;
+    result: any;
+  }[] = [];
+
   try {
-    // Create a new VM instance with a sandbox
     const vm = new VM({
-      timeout: 2000, // Set a timeout to prevent infinite loops
-      sandbox: {}, // Define a sandbox object if you want to provide specific globals
+      timeout: 2000,
+      sandbox: {},
     });
 
-    // Run the user's code in the VM to define the 'answer' function
     vm.run(code);
 
-    // Call the 'answer' function from within the VM
-    const result = vm.run(`answer(...${JSON.stringify(params)})`);
-    return {
-      isError: false,
-      errorMessage: null,
-      result: result === undefined ? "undefined" : result,
-    };
+    paramsArray.forEach((params) => {
+      try {
+        const result = vm.run(`answer(...${JSON.stringify(params)})`);
+
+        results.push({
+          isError: false,
+          errorMessage: null,
+          result: result === undefined ? "undefined" : result,
+        });
+      } catch (error) {
+        results.push({
+          isError: true,
+          errorMessage:
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred",
+          result: null,
+        });
+      }
+    });
+
+    return results;
   } catch (error) {
-    if (error instanceof Error) {
-      return {
-        isError: true,
-        errorMessage: error.message,
-        result: null,
-      };
-    }
+    // handle global errors
     return {
       isError: true,
-      errorMessage: "An unexpected error occurred",
+      errorMessage: "A global error occurred while compiling the JS code",
       result: null,
     };
   }
