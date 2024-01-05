@@ -16,8 +16,10 @@ export default function compileJS(code: string, paramsArray: any[]) {
     vm.run(code);
 
     paramsArray.forEach((params) => {
+      console.log(params);
+      
       try {
-        const result = vm.run(`answer(...${JSON.stringify(params)})`);
+          const result = vm.run(`answer(${JSON.stringify(params)})`); 
 
         results.push({
           isError: false,

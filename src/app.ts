@@ -24,12 +24,8 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/compilers/js", (req: Request, res: Response) => {
   try {
-    console.log(req.body);
     const { code, params } = req.body;
     const result = compileJS(code, params);
-    console.log("result");
-
-    console.log(result);
 
     res.json({
       message: result,
