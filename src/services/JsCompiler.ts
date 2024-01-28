@@ -15,11 +15,12 @@ export default function compileJS(code: string, paramsArray: any[]) {
 
     vm.run(code);
 
-    paramsArray.forEach((params) => {
-      console.log(params);
-      
+    paramsArray.forEach((params: any) => {
+      // Convert object values to an array
+      const parameters = Object.values(params).map(param => `'${param}'`).join(", ");
+    
       try {
-          const result = vm.run(`answer(${JSON.stringify(params)})`); 
+        const result = vm.run(`answer(${parameters})`);
 
         results.push({
           isError: false,
