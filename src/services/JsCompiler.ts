@@ -14,8 +14,21 @@ export default function compileJS(code: string, paramsArray: any[]) {
     });
 
     vm.run(code);
-    console.log(paramsArray);
+    console.log(paramsArray); // [ { '1': [ 1, 3, 4 ], '2': 7 }, { '1': [ 1, 6, 4 ], '2': 10 } ]
 
+    // paramsArray.forEach((params) => {
+    //   // Convert object values to an array
+    //   const parameters = Object.values(params)
+    //     .map((param) => {
+    //       if (Array.isArray(param)) {
+    //         return `[${param.join(", ")}]`;
+    //       } else {
+    //         return `'${param}'`;
+    //       }
+    //     })
+    //     .join(", ");
+
+    //   console.log(parameters); // [1, 3, 4], '7' // [1, 6, 4], '10'
     paramsArray.forEach((params) => {
       // Convert object values to an array
       const parameters = Object.values(params)
@@ -23,10 +36,12 @@ export default function compileJS(code: string, paramsArray: any[]) {
           if (Array.isArray(param)) {
             return `[${param.join(", ")}]`;
           } else {
-            return `'${param}'`;
+            return param; // Remove the single quotes here
           }
         })
         .join(", ");
+
+      console.log(parameters); // [1, 3, 4], 7 // [1, 6, 4], 10
 
       try {
         const result = vm.run(`answer(${parameters})`);
