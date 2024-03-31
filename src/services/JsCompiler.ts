@@ -14,11 +14,20 @@ export default function compileJS(code: string, paramsArray: any[]) {
     });
 
     vm.run(code);
+    console.log(paramsArray);
 
-    paramsArray.forEach((params: any) => {
+    paramsArray.forEach((params) => {
       // Convert object values to an array
-      const parameters = Object.values(params).map(param => `'${param}'`).join(", ");
-    
+      const parameters = Object.values(params)
+        .map((param) => {
+          if (Array.isArray(param)) {
+            return `[${param.join(", ")}]`;
+          } else {
+            return `'${param}'`;
+          }
+        })
+        .join(", ");
+
       try {
         const result = vm.run(`answer(${parameters})`);
 
