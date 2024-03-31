@@ -28,20 +28,24 @@ export default function compileJS(code: string, paramsArray: any[]) {
     //     })
     //     .join(", ");
 
-    //   console.log(parameters); // [1, 3, 4], '7' // [1, 6, 4], '10'
+    //   console.log(parameters); // [ { '1': { key: 123 } } ]
     paramsArray.forEach((params) => {
       // Convert object values to an array
+      console.log(params); // { '1': { key: 123 } }
+
       const parameters = Object.values(params)
         .map((param) => {
           if (Array.isArray(param)) {
             return `[${param.join(", ")}]`;
+          } else if (typeof param === "object") {
+            return JSON.stringify(param); // Stringify objects
           } else {
             return param; // Remove the single quotes here
           }
         })
         .join(", ");
 
-      console.log(parameters); // [1, 3, 4], 7 // [1, 6, 4], 10
+      console.log(parameters); // { "key": 123}
 
       try {
         const result = vm.run(`answer(${parameters})`);
