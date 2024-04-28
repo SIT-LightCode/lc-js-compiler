@@ -28,6 +28,20 @@ export default function compileJS(code: string, paramsArray: any[]) {
     //     })
     //     .join(", ");
 
+    function formatParameter(param: any) {
+      if (typeof param === "string") {
+        try {
+          const parsed = JSON.parse(param);
+          if (typeof parsed === "object") {
+            return param; // do nothing
+          }
+        } catch (e) {
+          // If parsing fails, it's a pure string
+          return `'${param}'`;
+        }
+      }
+      return param;
+    }
     //   console.log(parameters); // [ { '1': { key: 123 } } ]
     paramsArray.forEach((params) => {
       // Convert object values to an array
@@ -45,10 +59,8 @@ export default function compileJS(code: string, paramsArray: any[]) {
         })
         .join(", ");
 
-      console.log(parameters); // { "key": 123}
-
       try {
-        const result = vm.run(`answer(${parameters})`);
+        const result = vm.run(`answer(${formatParameter(parameters)})`);
 
         results.push({
           isError: false,
