@@ -1,3 +1,4 @@
+import { log } from "console";
 import { VM } from "vm2";
 
 export default function compileJS(code: string, paramsArray: any[]) {
@@ -29,6 +30,13 @@ export default function compileJS(code: string, paramsArray: any[]) {
     //     .join(", ");
 
     function formatParameter(param: any) {
+      console.log("infunc");
+      console.log(param);
+      if (Array.isArray(param)) {
+        console.log("hereeee");
+
+        return param;
+      }
       if (typeof param === "string") {
         try {
           const parsed = JSON.parse(param);
@@ -37,7 +45,7 @@ export default function compileJS(code: string, paramsArray: any[]) {
           }
         } catch (e) {
           // If parsing fails, it's a pure string
-          return param;
+          return `'${param}'`;
         }
       }
       return param;
@@ -47,20 +55,26 @@ export default function compileJS(code: string, paramsArray: any[]) {
       // Convert object values to an array
       console.log(params); // { '1': { key: 123 } }
 
-      const parameters = Object.values(params)
-        .map((param) => {
-          if (Array.isArray(param)) {
-            return `[${param.join(", ")}]`;
-          } else if (typeof param === "object") {
-            return JSON.stringify(param); // Stringify objects
-          } else {
-            return param; // Remove the single quotes here
-          }
-        })
-        .join(", ");
+      const formatParameters = (params: any) => {
+        return Object.values(params)
+          .map((param) => {
+            if (typeof param === "object" || Array.isArray(param)) {
+              // This will correctly serialize both objects and arrays
+              return JSON.stringify(param);
+            } else if (typeof param === "string") {
+              // Ensures that strings are properly quoted
+              return `'${param}'`;
+            } else {
+              // Numbers and other types are returned as is
+              return param;
+            }
+          })
+          .join(", ");
+      };
 
       try {
-        const result = vm.run(`answer(${formatParameter(parameters)})`);
+        const formattedParams = formatParameters(params);
+        const result = vm.run(`answer(${formattedParams})`);
 
         results.push({
           isError: false,
