@@ -37,7 +37,7 @@ export default function compileJS(code: string, paramsArray: any[]) {
           }
         } catch (e) {
           // If parsing fails, it's a pure string
-          return `'${param}'`;
+          return param;
         }
       }
       return param;
